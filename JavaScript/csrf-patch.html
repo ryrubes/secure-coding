@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSRF Vulnerability</title>
+</head>
+<body>
+    <button id="change-password">Change Password</button>
+
+<!-- Remediate: Include CSRF token in the request headers to prevent CSRF -->
+<script>
+    document.getElementById('change-password').addEventListener('click', function() {
+        // CSRF Token should be retrieved from a hidden field or cookie
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        fetch('/change-password', {
+            method: 'POST',
+            body: JSON.stringify({ password: 'newpassword' }),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken  // Sending the CSRF token in the request
+            }
+        }).then(response => response.json())
+          .then(data => alert('Password changed'));
+    });
+</script>
+</body>
+</html>
